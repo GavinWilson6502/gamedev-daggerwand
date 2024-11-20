@@ -35,7 +35,7 @@ public class AxeSentryController : EnemyController
     }*/
 
     protected override void fixedUpdateIfUnpaused() {
-        if (stunTime > 0 || shockTime > 0) return;
+        if (stunTime > 0 || shockTime > 0 || launcher.transform.position.y > gameplayManager.getMainCameraY() + gameplayManager.getMainCameraHeight()) return;
         if (player != null) turn((int)Mathf.Sign(player.position.x - transform.position.x));
         if (attackTime <= 0) {
             animation = "Holding";
@@ -61,7 +61,7 @@ public class AxeSentryController : EnemyController
     }
 
     void turn(int direction) {
-        if (direction == facing) return;
+        if (direction == facing || direction == 0) return;
         if (direction < 0) renderer.flipX = false;
         else if (direction > 0) renderer.flipX = true;
         facing = direction;

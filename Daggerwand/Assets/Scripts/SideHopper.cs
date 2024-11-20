@@ -59,7 +59,7 @@ public class SideHopper : EnemyController
         UnityEngine.Vector2 diff = UnityEngine.Vector2.zero;
         if (player != null) {
             diff = player.position - transform.position;
-            if (seesPlayer = (Mathf.Abs(diff.y) <= 4 && !Physics2D.Raycast(transform.position, diff.normalized, diff.magnitude, 64)))
+            if (seesPlayer = (Mathf.Abs(diff.y) <= 4 && !Physics2D.Raycast(transform.position, diff.normalized, diff.magnitude, 64 | 4096)))
                 facing = (renderer.flipX = diff.x <= 0) ? -1 : 1;
         }
 
@@ -92,7 +92,7 @@ public class SideHopper : EnemyController
         if (Physics2D.Raycast(transform.position, UnityEngine.Vector2.down, 0.4375f * size + 0.03125f, 64)) {
             if (rb.velocity.y <= 0.03125f / Time.deltaTime) rb.velocity = new UnityEngine.Vector2(0, rb.velocity.y);
         }
-        else if (Physics2D.Raycast(transform.position, UnityEngine.Vector2.right * facing, 0.4375f * size + 0.03125f, 64)) {
+        else if (Physics2D.Raycast(transform.position, UnityEngine.Vector2.right * facing, 0.4375f * size + 0.03125f, 64 | 4096)) {
             renderer.flipX = (facing *= -1) < 0;
             rb.velocity = new UnityEngine.Vector2(-horizontalV, rb.velocity.y);
         }

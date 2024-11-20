@@ -10,15 +10,14 @@ public class LevelVertex : MonoBehaviour
     [SerializeField] LevelVertex up;
     LevelVertex partner;
     [SerializeField] Vector2 direction;
+    [SerializeField] bool checkpoint;
+    [SerializeField] bool bossRoom;
+    [SerializeField] BossController boss;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (direction.x < 0) partner = left;
-        else if (direction.x > 0) partner = right;
-        else if (direction.y < 0) partner = down;
-        else if (direction.y > 0) partner = up;
-        else partner = this;
+        init();
     }
 
     // Update is called once per frame
@@ -27,6 +26,13 @@ public class LevelVertex : MonoBehaviour
         
     }
 
+    public void init() {
+        if (direction.x < 0) partner = left;
+        else if (direction.x > 0) partner = right;
+        else if (direction.y < 0) partner = down;
+        else if (direction.y > 0) partner = up;
+        else partner = this;
+    }
     public LevelVertex getLeft() {
         return left;
     }
@@ -44,5 +50,14 @@ public class LevelVertex : MonoBehaviour
     }
     public Vector2 getDirection() {
         return direction;
+    }
+    public bool isCheckpoint() {
+        return checkpoint;
+    }
+    public bool isBossRoom() {
+        return bossRoom;
+    }
+    public BossController getBoss() {
+        return boss;
     }
 }

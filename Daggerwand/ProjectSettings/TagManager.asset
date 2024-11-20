@@ -17,7 +17,7 @@ TagManager:
   - Enemy Collision
   - Enemy Hitbox
   - Pickups
-  - 
+  - Enemy Walls
   - 
   - 
   - 
@@ -43,4 +43,7 @@ TagManager:
     locked: 0
   - name: HUD
     uniqueID: 3873070769
+    locked: 0
+  - name: Menu
+    uniqueID: 537898479
     locked: 0

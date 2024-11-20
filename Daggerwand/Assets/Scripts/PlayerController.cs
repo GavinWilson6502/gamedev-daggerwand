@@ -453,6 +453,13 @@ public class PlayerController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public int getLives() {
+        return lives;
+    }
+    public int getPotions() {
+        return potions;
+    }
+
     //TODO: some enemies + level design, and fine tune stuff like projectile speed while you're at it
     //If there's time later, then have shield continue to block already-blocked attacks
 }

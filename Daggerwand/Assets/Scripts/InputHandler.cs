@@ -20,6 +20,8 @@ public class InputHandler : MonoBehaviour
     {
         player.jump(Input.GetKeyDown(KeyCode.Space) ? 1 : (Input.GetKey(KeyCode.Space) ? 0 : -1));
 
+        if (gameplayManager.isPaused() && !gameplayManager.getSelectPause() && !gameplayManager.getGamePause()) return;
+
         if (Input.GetKeyDown(KeyCode.Escape)) gameplayManager.toggleGamePause();
         if (gameplayManager.getGamePause()) return;
 
@@ -37,11 +39,11 @@ public class InputHandler : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Alpha5)) selection = 5;
             else if (Input.GetKeyDown(KeyCode.Alpha6)) selection = 6;
             else if (Input.GetKeyDown(KeyCode.Alpha8)) player.quaff();
-            gameplayManager.updateHUDSelection(selection);
+            if (((gameplayManager.fetchWeapons() >> selection) & 1) == 1) gameplayManager.updateHUDSelection(selection);
             return;
         }
         if (Input.GetKeyUp(KeyCode.K)) {
-            player.setWeapon(selection);
+            if (((gameplayManager.fetchWeapons() >> selection) & 1) == 1) player.setWeapon(selection);
             gameplayManager.setSelectMenuActive(false);
         }
 
