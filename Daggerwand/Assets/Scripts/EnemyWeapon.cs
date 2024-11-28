@@ -17,7 +17,7 @@ public class EnemyWeapon : MonoBehaviour
     [SerializeField] int priority;
     EnemyController enemyController;
 
-    bool isPaused = false;
+    protected bool isPaused = false;
     int attackStatus = 0;
 
     // Start is called before the first frame update
@@ -46,7 +46,7 @@ public class EnemyWeapon : MonoBehaviour
         OnTriggerStay2D(other);
     }
 
-    void OnTriggerStay2D(Collider2D other) {
+    public virtual void OnTriggerStay2D(Collider2D other) {
         if (attackStatus < 0 || other.transform.parent == null) return;
         PlayerController pc = other.GetComponentInParent<PlayerController>();
         if (pc == null) return;

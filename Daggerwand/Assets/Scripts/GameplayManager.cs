@@ -375,4 +375,8 @@ public class GameplayManager : MonoBehaviour
     public Vector2 getGravity() {
         return gravity;
     }
+
+    public void startTremor(float duration) {
+        if (player != null) player.startTremor(duration);
+    }
 }

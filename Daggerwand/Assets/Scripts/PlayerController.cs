@@ -62,6 +62,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float maxKnockbackTime;
     float knockbackTime = 0;
     float shieldKnockbackTime = 0;
+    float tremorTime = 0;
 
     PlayerWeapon projectile = null;
 
@@ -139,6 +140,13 @@ public class PlayerController : MonoBehaviour
             projectile.setIsPaused(gameplayManager.isPaused());
         }
         if (gameplayManager.isPaused()) return;
+
+        if (tremorTime > 0) {
+            tremorTime -= Time.deltaTime;
+            knockbackTime = 0;
+            shieldKnockbackTime = 0;
+            attackTime = 0;
+        }
 
         if (knockbackTime > 0) {
             knockbackTime -= Time.deltaTime;
@@ -230,7 +238,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void jump(int input) {
-        if (knockbackTime > 0) input = -1;
+        if (knockbackTime > 0 || tremorTime > 0) input = -1;
         if (isGrounded()) coyoteTime = maxCoyoteTime;
         if (gameplayManager.isPaused()) {
             if (input < 0) jumpBuffer = 0;
@@ -398,6 +406,7 @@ public class PlayerController : MonoBehaviour
         knockbackTime = maxKnockbackTime;
         shieldKnockbackTime = 0;
         attackTime = 0;
+        tremorTime = 0;
         releaseAttack();
         currentStanding = standing;
         currentCrouching = crouching;
@@ -458,6 +467,17 @@ public class PlayerController : MonoBehaviour
     }
     public int getPotions() {
         return potions;
+    }
+
+    public void startTremor(float duration) {
+        if (!isGrounded()) return;
+        tremorTime = duration;
+        releaseAttack();
+        stop();
+    }
+
+    public bool getTremor() {
+        return tremorTime > 0;
     }
 
     //TODO: some enemies + level design, and fine tune stuff like projectile speed while you're at it

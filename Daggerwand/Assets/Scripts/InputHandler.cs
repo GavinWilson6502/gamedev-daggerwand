@@ -47,7 +47,7 @@ public class InputHandler : MonoBehaviour
             gameplayManager.setSelectMenuActive(false);
         }
 
-        if (gameplayManager.isPaused() || player.getKnockback()) return;
+        if (gameplayManager.isPaused() || player.getKnockback() || player.getTremor()) return;
 
         int direction = 0;
         if (Input.GetKey(KeyCode.A)) direction -= 1;
@@ -67,7 +67,7 @@ public class InputHandler : MonoBehaviour
     }
 
     void FixedUpdate() {
-        if (gameplayManager.isPaused() || player.getKnockback()) return;
+        if (gameplayManager.isPaused() || player.getKnockback() || player.getTremor()) return;
 
         int direction = 0;
         if (Input.GetKey(KeyCode.A)) direction -= 1;

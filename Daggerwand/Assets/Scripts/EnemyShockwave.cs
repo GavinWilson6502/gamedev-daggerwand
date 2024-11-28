@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using System;
 
-public class PlayerShockwave : PlayerWeapon
+public class EnemyShockwave : EnemyWeapon
 {
     [SerializeField] Tilemap ground;
-
+    Vector2 direction = Vector2.right;
+    [SerializeField] Vector2 initialV;
+    [SerializeField] float maxDecayTime;
+    float decayTime;
+    
     // Start is called before the first frame update
     void Start()
     {
-        ground = GetComponentInParent<PlayerController>().getGround();
+        ground = GetComponentInParent<EnemyController>().getGround();
         //if (ground.HasTile(ground.WorldToCell(new Vector3(transform.position.x, transform.position.y + 0.5f, 0)))
         //    || !ground.HasTile(ground.WorldToCell(new Vector3(transform.position.x, transform.position.y - 0.5f, 0)))) {
         Tile tile;
@@ -35,7 +38,15 @@ public class PlayerShockwave : PlayerWeapon
     }*/
 
     void FixedUpdate() {
+        Rigidbody2D[] rigidbodies = GetComponentsInChildren<Rigidbody2D>();
+        foreach (Rigidbody2D rigidbody in rigidbodies) rigidbody.simulated = !isPaused;
         if (isPaused) return;
+
+        if (decayTime <= 0) {
+            Destroy(gameObject);
+            return;
+        }
+        decayTime -= Time.deltaTime;
         
         Vector2 destination = (Vector2)transform.position + direction * initialV.magnitude * Time.deltaTime;
         if (direction.x > 0 && Mathf.Ceil(transform.position.x) < destination.x
@@ -84,12 +95,11 @@ public class PlayerShockwave : PlayerWeapon
     }
 
     public override void OnTriggerStay2D(Collider2D other) {
-        if (other.gameObject.layer != 10) return;
-        EnemyController enemy = other.transform.parent == null ? other.GetComponent<EnemyWeapon>().getEnemyController() : other.GetComponentInParent<EnemyController>();
-        if (enemy == null) return;
-        int temp = enemy.onAttacked(weaponName, projectile, direction, other);
-        if (temp == 0) return;
-        if (!attackStatus.ContainsKey(enemy)) attackStatus.Add(enemy, new List<int>());
-        attackStatus[enemy].Add(temp);
+        if (other.gameObject.name.Equals("Shield Block")) return;
+        base.OnTriggerStay2D(other);
+    }
+
+    public void refresh() {
+        decayTime = maxDecayTime;
     }
 }

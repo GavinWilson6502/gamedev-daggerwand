@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using System;
 
 public class EnemyController : MonoBehaviour
@@ -173,5 +174,9 @@ public class EnemyController : MonoBehaviour
         if (a == 0) return new float[] {-c / b, -c / b};
         float temp = Mathf.Sqrt(b * b - 4 * a * c);
         return new float[] {(-b - temp) / (2 * a), (-b + temp) / (2 * a)};
+    }
+
+    public Tilemap getGround() {
+        return gameplayManager.getGround();
     }
 }
