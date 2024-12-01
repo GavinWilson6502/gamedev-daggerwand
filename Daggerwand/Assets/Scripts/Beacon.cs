@@ -76,7 +76,7 @@ public class Beacon : MonoBehaviour
                 arrow.transform.position = new Vector2(transform.position.x, transform.position.y + 0.25f);
                 arrow.bodyType = RigidbodyType2D.Kinematic;
                 arrow.velocity = Vector2.zero;
-                Collider2D[] arrowColliders =  arrow.GetComponentsInChildren<Collider2D>();
+                Collider2D[] arrowColliders = arrow.GetComponentsInChildren<Collider2D>();
                 for (int i = 0; i < arrowColliders.Length; ++i) arrowColliders[i].enabled = false;
                 arrowRenderer.sprite = arrowAlight;
                 hit = true;
@@ -103,7 +103,7 @@ public class Beacon : MonoBehaviour
 
     private bool targetReached() {
         if (transform.position.y < target.y) {
-            transform.position = new Vector2(transform.position.x, target.y);
+            transform.position = new Vector3(transform.position.x, target.y, transform.position.z);
             return true;
         }
         if (rb.velocity.x < 0) return transform.position.x <= target.x;

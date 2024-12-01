@@ -38,6 +38,10 @@ public abstract class BossController : EnemyController
         onActivate();
     }
 
+    protected bool getActive() {
+        return active;
+    }
+
     protected virtual void onActivate() {}
 
     public abstract Color getColor();
