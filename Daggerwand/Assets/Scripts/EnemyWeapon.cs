@@ -16,6 +16,7 @@ public class EnemyWeapon : MonoBehaviour
     [SerializeField] int damage;
     [SerializeField] int priority;
     EnemyController enemyController;
+    bool disabled = false;
 
     protected bool isPaused = false;
     int attackStatus = 0;
@@ -23,7 +24,7 @@ public class EnemyWeapon : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        enemyController = GetComponentInParent<EnemyController>();
+        setEnemyController();
     }
 
     // Update is called once per frame
@@ -47,6 +48,7 @@ public class EnemyWeapon : MonoBehaviour
     }
 
     public virtual void OnTriggerStay2D(Collider2D other) {
+        if (disabled) return;
         if (attackStatus < 0 || other.transform.parent == null) return;
         PlayerController pc = other.GetComponentInParent<PlayerController>();
         if (pc == null) return;
@@ -94,5 +96,13 @@ public class EnemyWeapon : MonoBehaviour
 
     public float getMargin() {
         return margin;
+    }
+
+    public void setEnemyController() {
+        enemyController = GetComponentInParent<EnemyController>();
+    }
+
+    public void setDisabled(bool d) {
+        disabled = d;
     }
 }

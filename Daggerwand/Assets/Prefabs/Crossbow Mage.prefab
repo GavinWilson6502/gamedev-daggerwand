@@ -178,7 +178,7 @@ MonoBehaviour:
   damageValues:
     slashDamage: 3
     thrustDamage: 3
-    backjabDamage: 5
+    backjabDamage: 8
     twirlDamage: 0
     blockDamage: 3
     swingDamage: 5

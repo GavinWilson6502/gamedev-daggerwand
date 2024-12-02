@@ -95,7 +95,7 @@ public class Skeleton : EnemyController
 
     bool isJumping() {
         return rb.velocity.y >= 0.5f * terminalVelocity
-            || !Physics2D.BoxCast(transform.position, new Vector2(0.9375f, 0.0625f), 0, Vector2.down, 1, 64);
+            || !Physics2D.BoxCast(transform.position, new Vector2(0.875f, 0.0625f), 0, Vector2.down, 1, 64);
     }
 
     void shoot() {
