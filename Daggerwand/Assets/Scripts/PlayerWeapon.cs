@@ -102,8 +102,15 @@ public class PlayerWeapon : MonoBehaviour
     public virtual void OnTriggerStay2D(Collider2D other) {
         if (other.gameObject.layer != 10) return;
         EnemyController enemy = other.transform.parent == null ? other.GetComponent<EnemyWeapon>().getEnemyController() : other.GetComponentInParent<EnemyController>();
+        if (weaponName.Equals("Block") && other.transform.parent != null && other.transform.parent.name.Equals("Shield Mage")) {
+            if (!enemy.getInvincible()) {
+                GetComponentInParent<PlayerController>().onBlock(false);
+                enemy.setInvincible();
+            }
+            return;
+        }
         if (enemy == null || hits.Contains(enemy)) return;
-        int temp = enemy.onAttacked(weaponName, projectile, projectile ? rb.velocity.normalized : direction, other);
+        int temp = enemy.onAttacked(weaponName, projectile, projectile ? rb.velocity.normalized : (direction == Vector2.zero ? (other.transform.position - transform.position).normalized : direction), other);
         if (temp == 0) return;
         if (!attackStatus.ContainsKey(enemy)) attackStatus.Add(enemy, new List<int>());
         attackStatus[enemy].Add(temp);

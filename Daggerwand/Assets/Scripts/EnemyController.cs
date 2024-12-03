@@ -179,4 +179,11 @@ public class EnemyController : MonoBehaviour
     public Tilemap getGround() {
         return gameplayManager.getGround();
     }
+
+    public bool getInvincible() {
+        return invincibilityTime > 0;
+    }
+    public void setInvincible() {
+        invincibilityTime = maxInvincibilityTime;
+    }
 }
