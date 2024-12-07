@@ -55,6 +55,7 @@ public class Skeleton : EnemyController
             if (player != null) turn((int)Mathf.Sign(player.position.x - transform.position.x));
             return;
         }
+        if (stunTime > 0 || shockTime > 0) return;
         if (isJumping()) {
             rb.velocity = new Vector2(airSpeed, rb.velocity.y);
             if (transform.position.y > jumpHeight) {

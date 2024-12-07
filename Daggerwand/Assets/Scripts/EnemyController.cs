@@ -137,6 +137,7 @@ public class EnemyController : MonoBehaviour
         }
         EnemyWeapon attackedHitbox = attackedCollider.GetComponent<EnemyWeapon>();
         if (weaponName.Equals("Block")) {
+            if (attackedHitbox.getProjectile()) return 2;
             if (invincibilityTime <= 0 && shockTime <= 0) attackedBy[index] = "Block";
             if (shockTime > 0) return 0;
             if (attackedCollider.name.Equals("Hurtbox")) return health - damageValues[weaponName] > 0 ? 1 : 3;

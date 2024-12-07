@@ -24,7 +24,7 @@ public class EnemyWeapon : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        setEnemyController();
+        if (enemyController == null) setEnemyController();
     }
 
     // Update is called once per frame
@@ -52,7 +52,7 @@ public class EnemyWeapon : MonoBehaviour
         if (attackStatus < 0 || other.transform.parent == null) return;
         PlayerController pc = other.GetComponentInParent<PlayerController>();
         if (pc == null) return;
-        int temp = pc.onAttacked(projectile ? gameObject : enemyController.gameObject, projectile, damage, priority, other);
+        int temp = pc.onAttacked(projectile ? gameObject : enemyController.gameObject, this, projectile, damage, priority, other);
         if (temp == 0) return;
         attackStatus = temp;
     }
@@ -100,6 +100,9 @@ public class EnemyWeapon : MonoBehaviour
 
     public void setEnemyController() {
         enemyController = GetComponentInParent<EnemyController>();
+    }
+    public void setEnemyController(EnemyController ec) {
+        enemyController = ec;
     }
 
     public void setDisabled(bool d) {

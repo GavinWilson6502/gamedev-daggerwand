@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float maxSwingTime;
     [SerializeField] float maxSlamTime;
     int facing = 1;
+    [Header("Audio")]
+    [SerializeField] AudioClip attackSFX;
+    [SerializeField] AudioClip hurtSFX;
 
     [Header("Combat")]
     [SerializeField] int maxHealth = 100;
@@ -69,6 +72,7 @@ public class PlayerController : MonoBehaviour
     SpriteRenderer renderer;
     Rigidbody2D rb;
     Collider2D[] colliders;
+    AudioSource audioSource;
 
     bool isCrouching = false;
     bool isJumping = false;
@@ -93,6 +97,7 @@ public class PlayerController : MonoBehaviour
         renderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         colliders = GetComponentsInChildren<Collider2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -102,18 +107,30 @@ public class PlayerController : MonoBehaviour
 
         if (gameplayManager.isPaused()) return;
 
+        bool attackedEffective = false;
+        List<GameObject> toRemove = new List<GameObject>();
         foreach (KeyValuePair<GameObject, int[]> kvp in projectileAttackedStatus) {
+            if (kvp.Key == null) {
+                toRemove.Add(kvp.Key);
+                continue;
+            }
             if (kvp.Value[0] <= 0) continue;
+            if (attackedEffective) {
+                toRemove.Add(kvp.Key);
+                continue;
+            }
             onAttackedEffective(kvp.Value[1]);
-            meleeAttackedStatus.Clear();
-            break;
+            attackedEffective = true;
+            kvp.Value[0] = -1;
         }
-        foreach (KeyValuePair<GameObject, int[]> kvp in meleeAttackedStatus) {
-            if (kvp.Value[0] <= 0) continue;
-            onAttackedEffective(kvp.Value[1]);
-            break;
+        foreach (GameObject go in toRemove) projectileAttackedStatus.Remove(go);
+        if (!attackedEffective) {
+            foreach (KeyValuePair<GameObject, int[]> kvp in meleeAttackedStatus) {
+                if (kvp.Key == null || kvp.Value[0] <= 0) continue;
+                onAttackedEffective(kvp.Value[1]);
+                break;
+            }
         }
-        projectileAttackedStatus.Clear();
         meleeAttackedStatus.Clear();
 
         float maxVerticalSpeed = isFlinging ? flingSpeed : terminalVelocity;
@@ -333,6 +350,7 @@ public class PlayerController : MonoBehaviour
         magic[weapon] -= magicCost[weapon];
         if (magic[weapon] < 0) magic[weapon] = 0;
         gameplayManager.updateHUDMagic(weapon, (float)magic[weapon] / maxMagic);
+        audioSource.PlayOneShot(attackSFX);
     }
     public void holdAttack() {
         switch (weapon) {
@@ -376,10 +394,13 @@ public class PlayerController : MonoBehaviour
         return attackTime;
     }
 
-    public int onAttacked(GameObject enemy, bool projectile, int damage, int priority, Collider2D attackedCollider) {
+    public int onAttacked(GameObject enemy, EnemyWeapon enemyWeapon, bool projectile, int damage, int priority, Collider2D attackedCollider) {
         if (invincibilityTime > 0) return 0;
         Dictionary<GameObject, int[]> attackedStatus = projectile ? projectileAttackedStatus : meleeAttackedStatus;
-        if (attackedCollider == colliders[8]) return (attackedStatus[enemy] = new int[] {-1, damage, priority})[0];
+        if (attackedCollider == colliders[8]
+         && !enemy.name.Equals("Shield Mage")
+         && !(enemy.name.Equals("Pike Mage") && enemyWeapon.name.Equals("Horizontal Pike") && enemy.GetComponent<PikeMage>().getHitShield()))
+            return (attackedStatus[enemy] = new int[] {-1, damage, priority})[0];
         if (attackedStatus.ContainsKey(enemy) && (attackedStatus[enemy][0] < 0 || attackedStatus[enemy][2] >= priority)) return 0;
         if (attackedCollider == colliders[2] || attackedCollider == colliders[3]) return (attackedStatus[enemy] = new int[] {1, damage, priority})[0];
         return 0;
@@ -419,6 +440,7 @@ public class PlayerController : MonoBehaviour
         }
         gameplayManager.updateHUDHealth((float)health / maxHealth);
         gameplayManager.updateHUDPotion(potions, health >= maxHealth);
+        audioSource.PlayOneShot(hurtSFX, 2);
     }
 
     public bool getKnockback() {

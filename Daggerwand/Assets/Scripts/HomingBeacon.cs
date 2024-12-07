@@ -30,6 +30,7 @@ public class HomingBeacon : EnemyController
     }*/
 
     protected override void fixedUpdateIfUnpaused() {
+        if (stunTime > 0 || shockTime > 0) return;
         if (!active) {
             if (player != null && Mathf.Abs(transform.position.x - gameplayManager.getMainCameraX()) <= gameplayManager.getMainCameraWidth() + 1 && Mathf.Abs(transform.position.y - gameplayManager.getMainCameraY()) <= gameplayManager.getMainCameraHeight() - 1) {
                 transform.position = new Vector2(transform.position.x, Mathf.Min(player.position.y + 4.5f, gameplayManager.getMainCameraY() + gameplayManager.getMainCameraHeight() - 1));

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
@@ -21,6 +20,7 @@ public class GameplayManager : MonoBehaviour
     float winTime;
     bool won = false;
     [SerializeField] PlayerController player;
+    [SerializeField] EnemyController defaultEnemy;
     [Header("Camera")]
     [SerializeField] Camera mainCamera;
     [SerializeField] Vector2 aspectRatio = new Vector2(16, 9);
@@ -35,6 +35,9 @@ public class GameplayManager : MonoBehaviour
     float bossIntroTime = 0;
     Vector3 screenTransitionStart = Vector3.zero;
     Vector3 screenTransitionEnd = Vector3.zero;
+    [Header("Audio")]
+    [SerializeField] AudioSource musicSource;
+    [SerializeField] AudioClip deathMusic;
     [Header("UI")]
     [SerializeField] Canvas hud;
     [Header("Grid")]
@@ -60,6 +63,7 @@ public class GameplayManager : MonoBehaviour
     {
         fixAspectRatio();
         if (won) {
+            musicSource.Stop();
             winTime -=Time.deltaTime;
             if (winTime <= 0) persistentManager.win(player.getLives(), player.getPotions(), levelId);
         }
@@ -127,6 +131,8 @@ public class GameplayManager : MonoBehaviour
         selectPause = false;
         setSelectMenuActive(false);
         screenTransitionTime = 0;
+        musicSource.Stop();
+        musicSource.PlayOneShot(deathMusic);
     }
     public void init() {
         persistentManager.init(this);
@@ -378,5 +384,9 @@ public class GameplayManager : MonoBehaviour
 
     public void startTremor(float duration) {
         if (player != null) player.startTremor(duration);
+    }
+
+    public EnemyController getDefaultEnemy() {
+        return defaultEnemy;
     }
 }

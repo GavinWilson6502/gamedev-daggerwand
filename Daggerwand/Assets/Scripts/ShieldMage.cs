@@ -58,7 +58,7 @@ public class ShieldMage : BossController
     }*/
 
     protected override bool attackedColliderIntangible(string weaponName, bool projectile, Vector2 direction, Collider2D attackedCollider) {
-        return false;
+        return weaponName.Equals("Block");
     }
     protected override bool attackedColliderBlocks(string weaponName, bool projectile, Vector2 direction, Collider2D attackedCollider) {
         if (Mathf.Sign(direction.x) != facing) {

@@ -33,6 +33,7 @@ public class Volley : MonoBehaviour
             if (arrow != null) Destroy(arrow.gameObject);
             arrow = launcher.launch(1, 1).GetComponent<Rigidbody2D>();
             gameplayManager.addProjectile(arrow.GetComponent<EnemyWeapon>());
+            arrow.GetComponent<EnemyWeapon>().setEnemyController(gameplayManager.getDefaultEnemy());
             arrow.transform.SetParent(null);
             arrow.velocity = new Vector2(0, -arrowSpeed);
             attackTime = period;

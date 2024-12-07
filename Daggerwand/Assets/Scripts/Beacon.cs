@@ -63,6 +63,7 @@ public class Beacon : MonoBehaviour
         if (!shot) {
             arrow = launcher.launch(1, 1).GetComponent<Rigidbody2D>();
             gameplayManager.addProjectile(arrow.GetComponent<EnemyWeapon>());
+            arrow.GetComponent<EnemyWeapon>().setEnemyController(gameplayManager.getDefaultEnemy());
             arrow.transform.SetParent(null);
             arrow.velocity = new Vector2(0, -arrowSpeed);
             arrowRenderer = arrow.GetComponent<SpriteRenderer>();

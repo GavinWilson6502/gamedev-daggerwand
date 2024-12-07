@@ -24,7 +24,19 @@ public class ProjectileLauncher : MonoBehaviour
     public GameObject launch(int facingX, int facingY) {
         flipX = facingX < 0;
         flipY = facingY < 0;
-        return Instantiate(projectilePrefab, transform.position + transform.TransformDirection(new Vector3(facingX * offset.x, facingY * offset.y, 0)), transform.rotation, transform);
+        GameObject projectile = Instantiate(projectilePrefab, transform.position + transform.TransformDirection(new Vector3(facingX * offset.x, facingY * offset.y, 0)), transform.rotation, transform);
+        SpriteRenderer spriteRenderer = projectile.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null) {
+            spriteRenderer.flipX = flipX;
+            spriteRenderer.flipY = flipY;
+        }
+        EnemyWeapon enemyWeapon = projectile.GetComponent<EnemyWeapon>();
+        if (enemyWeapon != null) enemyWeapon.setEnemyController();
+        return projectile;
+    }
+
+    public GameObject getProjectilePrefab() {
+        return projectilePrefab;
     }
 
     public bool getFlipX() {

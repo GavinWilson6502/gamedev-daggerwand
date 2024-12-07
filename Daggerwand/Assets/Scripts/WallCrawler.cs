@@ -23,6 +23,7 @@ public class WallCrawler : EnemyController
     }*/
 
     protected override void fixedUpdateIfUnpaused() {
+        if (stunTime > 0 || shockTime > 0) return;
         direction = transform.TransformDirection(new Vector2(Mathf.Sign(speed), 0));
         Vector2 destination = (Vector2)(transform.position + transform.TransformVector(new Vector2(speed * Time.deltaTime, 0)));
         if (direction.x > 0 && Mathf.Ceil(transform.position.x - 0.5f) + 0.5f < destination.x

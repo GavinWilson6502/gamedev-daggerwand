@@ -12,8 +12,11 @@ public class PersistentManager : MonoBehaviour
     int[] magic = new int[] {100, 100, 100, 100, 100, 100, 100};
     List<bool> pickedUp = null;
     int checkpoint = 0;
-    int levelsBeaten = 127;
-    int prevLevel = 0;
+    int levelsBeaten = 1;
+    int prevLevel = -1;
+    float masterVolume = 0, musicVolume = 1, sfxVolume = 1;
+    bool nativeResolution = true;
+    int[] customResolution = new int[] {1920, 1080};
 
     // Start is called before the first frame update
     void Start()
@@ -89,7 +92,25 @@ public class PersistentManager : MonoBehaviour
     public int fetchPrevLevel() {
         return prevLevel;
     }
+    public float[] fetchVolumes() {
+        return new float[] {masterVolume, musicVolume, sfxVolume};
+    }
+    public int[] fetchResolution() {
+        if (nativeResolution) return null;
+        int[] temp = new int[customResolution.Length];
+        for (int i = 0; i < customResolution.Length; ++i) temp[i] = customResolution[i];
+        return temp;
+    }
     public void storePrevLevel(int levelId) {
         prevLevel = levelId;
+    }
+    public void storeVolumes(float master, float music, float sfx) {
+        masterVolume = master;
+        musicVolume = music;
+        sfxVolume = sfx;
+    }
+    public void storeResolution(bool native, int width, int height) {
+        if (nativeResolution = native) return;
+        customResolution = new int[] {width, height};
     }
 }

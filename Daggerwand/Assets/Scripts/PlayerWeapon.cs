@@ -22,6 +22,7 @@ public class PlayerWeapon : MonoBehaviour
     protected Dictionary<EnemyController, List<int>> attackStatus = new Dictionary<EnemyController, List<int>>();
     List<EnemyController> hits = new List<EnemyController>();
     List<EnemyController> tempHits = new List<EnemyController>();
+    List<EnemyWeapon> blockedProjectiles = new List<EnemyWeapon>();
 
     // Start is called before the first frame update
     void Start()
@@ -69,20 +70,23 @@ public class PlayerWeapon : MonoBehaviour
                 if (wasEffective > 0) GetComponentInParent<PlayerController>().onStun();
             }
         }
-        else if (attackStatus.Count != 0 && weaponName.Equals("Block")) {
-            int state = 0;
-            bool abs1 = false;
-            foreach (KeyValuePair<EnemyController, List<int>> kvp in attackStatus) {
-                state = 0;
-                abs1 = false;
-                foreach (int i in kvp.Value) {
-                    if (Math.Abs(i) == 1) abs1 = true;
-                    if (i < 0) state = -1;
-                    else if (i == 3 && state >= 0) state = 1;
+        else if (weaponName.Equals("Block")) {
+            blockedProjectiles.RemoveAll(item => item == null);
+            if (attackStatus.Count != 0) {
+                int state = 0;
+                bool abs1 = false;
+                foreach (KeyValuePair<EnemyController, List<int>> kvp in attackStatus) {
+                    state = 0;
+                    abs1 = false;
+                    foreach (int i in kvp.Value) {
+                        if (Math.Abs(i) == 1) abs1 = true;
+                        if (i < 0) state = -1;
+                        else if (i == 3 && state >= 0) state = 1;
+                    }
+                    if (state < 1 && abs1) break;
                 }
-                if (state < 1 && abs1) break;
+                GetComponentInParent<PlayerController>().onBlock(state < 1 && abs1);
             }
-            GetComponentInParent<PlayerController>().onBlock(state < 1 && abs1);
         }
         attackStatus.Clear();
     }
@@ -101,20 +105,21 @@ public class PlayerWeapon : MonoBehaviour
 
     public virtual void OnTriggerStay2D(Collider2D other) {
         if (other.gameObject.layer != 10) return;
-        EnemyController enemy = other.transform.parent == null ? other.GetComponent<EnemyWeapon>().getEnemyController() : other.GetComponentInParent<EnemyController>();
+        EnemyWeapon enemyWeapon = other.GetComponent<EnemyWeapon>();
+        EnemyController enemy = other.transform.parent == null ? enemyWeapon.getEnemyController() : other.GetComponentInParent<EnemyController>();
         if (weaponName.Equals("Block") && other.transform.parent != null && other.transform.parent.name.Equals("Shield Mage")) {
-            if (!enemy.getInvincible()) {
-                GetComponentInParent<PlayerController>().onBlock(false);
-                enemy.setInvincible();
-            }
+            if (!attackStatus.ContainsKey(enemy)) attackStatus.Add(enemy, new List<int>());
+            attackStatus[enemy].Add(2);
             return;
         }
-        if (enemy == null || hits.Contains(enemy)) return;
+        if (weaponName.Equals("Block") && other.name.Equals("Mage Shockwave(Clone)")) return;
+        if (enemy == null || hits.Contains(enemy) || (weaponName.Equals("Block") && blockedProjectiles.Contains(enemyWeapon))) return;
         int temp = enemy.onAttacked(weaponName, projectile, projectile ? rb.velocity.normalized : (direction == Vector2.zero ? (other.transform.position - transform.position).normalized : direction), other);
         if (temp == 0) return;
         if (!attackStatus.ContainsKey(enemy)) attackStatus.Add(enemy, new List<int>());
         attackStatus[enemy].Add(temp);
         if (projectile && continuous && !tempHits.Contains(enemy)) tempHits.Add(enemy);
+        else if (weaponName.Equals("Block") && enemyWeapon.getProjectile() && !blockedProjectiles.Contains(enemyWeapon)) blockedProjectiles.Add(enemyWeapon);
     }
 
     public bool getDespawnOffTop() {
